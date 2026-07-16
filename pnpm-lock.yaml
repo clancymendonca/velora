@@ -59,6 +59,9 @@ importers:
       '@velora/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
+      '@velora/validators':
+        specifier: workspace:*
+        version: link:../../packages/validators
       expo:
         specifier: ^51.0.28
         version: 51.0.39(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(react-native@0.74.5(@babel/core@7.29.7)(@babel/preset-env@7.29.7(@babel/core@7.29.7))(@types/react@18.3.31)(react@18.2.0))(react@18.2.0)
@@ -93,15 +96,24 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.45.4
         version: 2.110.5
+      '@velora/api':
+        specifier: workspace:*
+        version: link:../../packages/api
       '@velora/calculations':
         specifier: workspace:*
         version: link:../../packages/calculations
+      '@velora/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@velora/shared-types':
         specifier: workspace:*
         version: link:../../packages/shared-types
       '@velora/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@velora/validators':
+        specifier: workspace:*
+        version: link:../../packages/validators
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
@@ -146,11 +158,62 @@ importers:
         specifier: ^5.5.4
         version: 5.9.3
 
+  packages/api:
+    dependencies:
+      '@velora/calculations':
+        specifier: workspace:*
+        version: link:../calculations
+      '@velora/database':
+        specifier: workspace:*
+        version: link:../database
+      '@velora/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+      '@velora/validators':
+        specifier: workspace:*
+        version: link:../validators
+      decimal.js:
+        specifier: ^10.4.3
+        version: 10.6.0
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
+    devDependencies:
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
+
   packages/calculations:
     dependencies:
       '@velora/shared-types':
         specifier: workspace:*
         version: link:../shared-types
+      decimal.js:
+        specifier: ^10.4.3
+        version: 10.6.0
+    devDependencies:
+      fast-check:
+        specifier: ^3.21.0
+        version: 3.23.2
+
+  packages/database:
+    dependencies:
+      '@prisma/client':
+        specifier: ^5.19.1
+        version: 5.22.0(prisma@5.22.0)
+      '@velora/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+      decimal.js:
+        specifier: ^10.4.3
+        version: 10.6.0
+    devDependencies:
+      prisma:
+        specifier: ^5.19.1
+        version: 5.22.0
+      typescript:
+        specifier: ^5.5.4
+        version: 5.9.3
 
   packages/shared-types: {}
 
@@ -172,6 +235,15 @@ importers:
       typescript:
         specifier: ^5.5.4
         version: 5.9.3
+
+  packages/validators:
+    dependencies:
+      '@velora/shared-types':
+        specifier: workspace:*
+        version: link:../shared-types
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.76
 
 packages:
 
@@ -2859,6 +2931,9 @@ packages:
     resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4ZoWpEYBkGhQjwAjjDCkWxhY0VKEhk8wzY7F5cA==}
     engines: {node: '>=0.10.0'}
 
+  decimal.js@10.6.0:
+    resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
+
   deep-eql@5.0.2:
     resolution: {integrity: sha512-h5k/5U50IJJFpzfL6nO9jaaumfjO/f2NjK/oYB2Djzm4p9L+3T9qWpZqZ2hAbLPuuYq9wrU08WQyBTL5GbPk5Q==}
     engines: {node: '>=6'}
@@ -3300,6 +3375,10 @@ packages:
 
   exponential-backoff@3.1.3:
     resolution: {integrity: sha512-ZgEeZXj30q+I0EN+CbSSpIyPaJ5HVQD18Z1m+u1FXbAeT94mr1zw50q4q6jiiC447Nl/YTcIYSAftiGqetwXCA==}
+
+  fast-check@3.23.2:
+    resolution: {integrity: sha512-h5+1OzzfCC3Ef7VbtKdcv7zsstUQwUDlYpUTvjeUsJAssPgLn7QzbboPtL5ro04Mq0rPOsMzl7q5hIbRs2wD1A==}
+    engines: {node: '>=8.0.0'}
 
   fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
@@ -5001,6 +5080,9 @@ packages:
   punycode@2.3.1:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
+
+  pure-rand@6.1.0:
+    resolution: {integrity: sha512-bVWawvoZoBYpp6yIoQtQXHZjmz35RSVHnUOTefl8Vcjr8snTPY1wnpSPMWekcFwbxI6gtmT7rSYPFvz71ldiOA==}
 
   qrcode-terminal@0.11.0:
     resolution: {integrity: sha512-Uu7ii+FQy4Qf82G4xu7ShHhjhGahEpCWc3x8UavY3CTcWV+ufmmCtwkr7ZKsX42jdL0kr1B5FKUeqJvAn51jzQ==}
@@ -9432,6 +9514,8 @@ snapshots:
 
   decamelize@1.2.0: {}
 
+  decimal.js@10.6.0: {}
+
   deep-eql@5.0.2: {}
 
   deep-extend@0.6.0: {}
@@ -10095,6 +10179,10 @@ snapshots:
       - utf-8-validate
 
   exponential-backoff@3.1.3: {}
+
+  fast-check@3.23.2:
+    dependencies:
+      pure-rand: 6.1.0
 
   fast-deep-equal@3.1.3: {}
 
@@ -11894,6 +11982,8 @@ snapshots:
       once: 1.4.0
 
   punycode@2.3.1: {}
+
+  pure-rand@6.1.0: {}
 
   qrcode-terminal@0.11.0: {}
 

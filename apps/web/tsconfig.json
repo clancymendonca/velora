@@ -10,10 +10,7 @@
     "plugins": [{ "name": "next" }],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@velora/calculations": ["../../packages/calculations/src/index.ts"],
-      "@velora/shared-types": ["../../packages/shared-types/src/index.ts"],
-      "@velora/ui": ["../../packages/ui/src/index.ts"]
+      "@/*": ["./src/*"]
     }
   },
   "include": ["next-env.d.ts", "src/**/*.ts", "src/**/*.tsx", ".next/types/**/*.ts"],

@@ -1,5 +1,5 @@
 {
-  "name": "@velora/calculations",
+  "name": "@velora/validators",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,16 +12,13 @@
     }
   },
   "dependencies": {
-    "@velora/shared-types": "workspace:*",
-    "decimal.js": "^10.4.3"
-  },
-  "devDependencies": {
-    "fast-check": "^3.21.0"
+    "zod": "^3.23.8",
+    "@velora/shared-types": "workspace:*"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   }
 }

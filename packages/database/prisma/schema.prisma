@@ -1,0 +1,165 @@
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Sport {
+  BASKETBALL
+  FOOTBALL
+  SOCCER
+  BASEBALL
+  TENNIS
+  ESPORTS
+}
+
+enum EventStatus {
+  SCHEDULED
+  LIVE
+  FINISHED
+  SUSPENDED
+  CANCELLED
+}
+
+enum BetStatus {
+  PENDING
+  WON
+  LOST
+  PUSH
+  VOID
+}
+
+model League {
+  id        String   @id @default(uuid())
+  sport     Sport
+  name      String
+  country   String
+  isActive  Boolean  @default(true) @map("is_active")
+  events    Event[]
+
+  @@map("leagues")
+}
+
+model Event {
+  id         String      @id @default(uuid())
+  leagueId   String      @map("league_id")
+  externalId String      @unique @map("external_id")
+  homeTeam   String      @map("home_team")
+  awayTeam   String      @map("away_team")
+  startTime  DateTime    @map("start_time")
+  status     EventStatus @default(SCHEDULED)
+  league     League      @relation(fields: [leagueId], references: [id])
+  markets    Market[]
+
+  @@index([startTime])
+  @@map("events")
+}
+
+model Bookmaker {
+  id       String   @id @default(uuid())
+  key      String   @unique
+  name     String
+  isActive Boolean  @default(true) @map("is_active")
+  markets  Market[]
+
+  @@map("bookmakers")
+}
+
+model Market {
+  id          String      @id @default(uuid())
+  eventId     String      @map("event_id")
+  bookmakerId String      @map("bookmaker_id")
+  marketType  String      @map("market_type") // h2h, spreads, totals, props
+  status      String      @default("open")
+  event       Event       @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  bookmaker   Bookmaker   @relation(fields: [bookmakerId], references: [id])
+  selections  Selection[]
+
+  @@unique([eventId, bookmakerId, marketType])
+  @@map("markets")
+}
+
+model Selection {
+  id                 String         @id @default(uuid())
+  marketId           String         @map("market_id")
+  name               String
+  priceDecimal       Decimal        @map("price_decimal") @db.Decimal(10, 4)
+  priceAmerican      Int            @map("price_american")
+  impliedProbability Decimal        @map("implied_probability") @db.Decimal(5, 4)
+  market             Market         @relation(fields: [marketId], references: [id], onDelete: Cascade)
+  oddsHistory        OddsHistory[]
+  parlayLegs         ParlayLeg[]
+
+  @@map("selections")
+}
+
+model OddsHistory {
+  id            String    @id @default(uuid())
+  selectionId   String    @map("selection_id")
+  priceDecimal  Decimal   @map("price_decimal") @db.Decimal(10, 4)
+  priceAmerican Int       @map("price_american")
+  timestamp     DateTime  @default(now())
+  selection     Selection @relation(fields: [selectionId], references: [id], onDelete: Cascade)
+
+  @@index([selectionId, timestamp(sort: Desc)])
+  @@map("odds_history")
+}
+
+model Bet {
+  id            String          @id @default(uuid())
+  userId        String          @map("user_id")
+  status        BetStatus       @default(PENDING)
+  stake         Decimal         @db.Decimal(12, 2)
+  oddsDecimal   Decimal         @map("odds_decimal") @db.Decimal(10, 4)
+  expectedValue Decimal         @map("expected_value") @db.Decimal(6, 4)
+  kellyApplied  Decimal         @map("kelly_applied") @db.Decimal(5, 4)
+  placedAt      DateTime        @default(now()) @map("placed_at")
+  settledAt     DateTime?       @map("settled_at")
+  isParlay      Boolean         @default(false) @map("is_parlay")
+  legs          ParlayLeg[]
+  ledgerLogs    BankrollLedger[]
+  clv           ClvRecord?
+
+  @@index([userId, status])
+  @@map("bets")
+}
+
+model ParlayLeg {
+  id          String    @id @default(uuid())
+  betId       String    @map("bet_id")
+  selectionId String    @map("selection_id")
+  status      BetStatus @default(PENDING)
+  bet         Bet       @relation(fields: [betId], references: [id], onDelete: Cascade)
+  selection   Selection @relation(fields: [selectionId], references: [id])
+
+  @@map("parlay_legs")
+}
+
+model BankrollLedger {
+  id           String   @id @default(uuid())
+  userId       String   @map("user_id")
+  timestamp    DateTime @default(now())
+  type         String   // DEPOSIT, WITHDRAWAL, BET_PLACE, BET_SETTLEMENT, ADJUSTMENT
+  amount       Decimal  @db.Decimal(12, 2)
+  balanceAfter Decimal  @map("balance_after") @db.Decimal(12, 2)
+  betId        String?  @map("bet_id")
+  bet          Bet?     @relation(fields: [betId], references: [id])
+
+  @@index([userId, timestamp(sort: Desc)])
+  @@map("bankroll_ledger")
+}
+
+model ClvRecord {
+  id                  String   @id @default(uuid())
+  betId               String   @unique @map("bet_id")
+  placedOddsDecimal   Decimal  @map("placed_odds_decimal") @db.Decimal(10, 4)
+  closingOddsDecimal  Decimal  @map("closing_odds_decimal") @db.Decimal(10, 4)
+  clvPercent          Decimal  @map("clv_percent") @db.Decimal(6, 4)
+  bet                 Bet      @relation(fields: [betId], references: [id], onDelete: Cascade)
+
+  @@map("clv_records")
+}

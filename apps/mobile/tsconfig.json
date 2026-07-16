@@ -5,10 +5,7 @@
     "types": ["react", "react-native"],
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@velora/calculations": ["../../packages/calculations/src/index.ts"],
-      "@velora/shared-types": ["../../packages/shared-types/src/index.ts"],
-      "@velora/ui": ["../../packages/ui/src/index.ts"]
+      "@/*": ["./src/*"]
     },
     "noEmit": true
   },

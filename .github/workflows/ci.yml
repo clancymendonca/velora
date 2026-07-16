@@ -1,7 +1,8 @@
-name: CI
+name: Continuous Integration
 
 on:
   pull_request:
+    branches: [main]
   push:
     branches: [main]
 
@@ -12,16 +13,42 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
         with:
           version: 9.7.0
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: pnpm
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm lint
-      - run: pnpm typecheck
-      - run: pnpm test
-      - run: pnpm build
+
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache Turborepo Build Outputs
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
+
+      - name: Verify Lint Rules
+        run: pnpm lint
+
+      - name: Verify Types
+        run: pnpm typecheck
+
+      - name: Run Workspace Tests with Coverage
+        run: pnpm test
+
+      - name: Audit Dependencies for Vulnerabilities
+        run: pnpm audit --audit-level=high
+
+      - name: Verify Production Builds
+        run: pnpm build

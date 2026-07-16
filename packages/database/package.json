@@ -1,5 +1,5 @@
 {
-  "name": "@velora/calculations",
+  "name": "@velora/database",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,16 +12,18 @@
     }
   },
   "dependencies": {
+    "@prisma/client": "^5.19.1",
     "@velora/shared-types": "workspace:*",
     "decimal.js": "^10.4.3"
   },
   "devDependencies": {
-    "fast-check": "^3.21.0"
+    "prisma": "^5.19.1",
+    "typescript": "^5.5.4"
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "prisma generate && tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run --passWithNoTests"
   }
 }
