@@ -108,7 +108,7 @@ export function devigShin(probabilities: Decimal[]): Decimal[] {
   // Solve for z in [0, 1) such that the sum of true probabilities is exactly 1.0
   let low = new Decimal(0);
   let high = new Decimal(1 - 1e-15); // limit z close to 1 to avoid division by zero
-  let z = new Decimal(0.1);
+  let z: Decimal;
   const tolerance = new Decimal('1e-15');
   let result: Decimal[] = [];
 
