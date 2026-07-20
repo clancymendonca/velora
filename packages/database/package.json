@@ -23,7 +23,8 @@
   "scripts": {
     "build": "prisma generate && tsc -p tsconfig.json",
     "lint": "eslint src --ext .ts",
-    "typecheck": "tsc --noEmit",
+    "db:generate": "prisma generate",
+    "typecheck": "prisma generate && tsc --noEmit",
     "test": "vitest run --passWithNoTests"
   }
 }

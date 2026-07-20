@@ -1,4 +1,5 @@
 import { BaseRepository } from './BaseRepository.js';
+import { BankrollSnapshot } from '@prisma/client';
 import { Decimal } from 'decimal.js';
 
 export interface BankrollSnapshotData {
@@ -44,7 +45,7 @@ export class AnalyticsRepository extends BaseRepository {
       orderBy: { timestamp: 'asc' },
     });
 
-    return snapshots.map((s) => ({
+    return snapshots.map((s: BankrollSnapshot) => ({
       id: s.id,
       userId: s.userId,
       balance: s.balance.toNumber(),

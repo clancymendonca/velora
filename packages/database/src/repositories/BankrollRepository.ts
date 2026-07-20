@@ -1,5 +1,6 @@
 import { BaseRepository } from './BaseRepository.js';
 import { BankrollEntry } from '@velora/shared-types';
+import { BankrollLedger } from '@prisma/client';
 import { Prisma } from '../client.js';
 import { Decimal } from 'decimal.js';
 
@@ -25,7 +26,7 @@ export class BankrollRepository extends BaseRepository {
     type: 'deposit' | 'withdrawal' | 'adjustment',
     amount: number
   ): Promise<BankrollEntry> {
-    return this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx: Prisma.TransactionClient) => {
       const currentBalance = await this.getBalanceForTx(tx, userId);
       const decAmount = new Decimal(amount);
       
@@ -65,7 +66,7 @@ export class BankrollRepository extends BaseRepository {
    * Records bet placement by debiting the stake from the user's bankroll balance.
    */
   async recordBetPlacement(userId: string, betId: string, stake: number): Promise<BankrollEntry> {
-    return this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx: Prisma.TransactionClient) => {
       const currentBalance = await this.getBalanceForTx(tx, userId);
       const decStake = new Decimal(stake);
 
@@ -89,7 +90,7 @@ export class BankrollRepository extends BaseRepository {
         id: log.id,
         userId: log.userId,
         timestamp: log.timestamp,
-        type: 'bet_place',
+        type: 'bet_place' as const,
         amount: log.amount.toNumber(),
         balanceAfter: log.balanceAfter.toNumber(),
         referenceId: log.betId ?? undefined,
@@ -101,7 +102,7 @@ export class BankrollRepository extends BaseRepository {
    * Records bet settlement by adding won payouts to the user's bankroll balance.
    */
   async recordBetSettlement(userId: string, betId: string, payout: number): Promise<BankrollEntry> {
-    return this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx: Prisma.TransactionClient) => {
       const currentBalance = await this.getBalanceForTx(tx, userId);
       const decPayout = new Decimal(payout);
       const balanceAfter = currentBalance.plus(decPayout);
@@ -120,7 +121,7 @@ export class BankrollRepository extends BaseRepository {
         id: log.id,
         userId: log.userId,
         timestamp: log.timestamp,
-        type: 'bet_settlement',
+        type: 'bet_settlement' as const,
         amount: log.amount.toNumber(),
         balanceAfter: log.balanceAfter.toNumber(),
         referenceId: log.betId ?? undefined,
@@ -138,7 +139,7 @@ export class BankrollRepository extends BaseRepository {
       orderBy: { timestamp: 'desc' },
     });
 
-    return logs.map((log) => ({
+    return logs.map((log: BankrollLedger) => ({
       id: log.id,
       userId: log.userId,
       timestamp: log.timestamp,

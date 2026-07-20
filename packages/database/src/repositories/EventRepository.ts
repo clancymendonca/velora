@@ -1,5 +1,6 @@
 import { BaseRepository } from './BaseRepository.js';
 import { Event, Sport, EventStatus, Selection } from '@velora/shared-types';
+import { Event as PrismaEvent, OddsHistory as PrismaOddsHistory } from '@prisma/client';
 import { Prisma } from '../client.js';
 import { Decimal } from 'decimal.js';
 
@@ -38,7 +39,7 @@ export class EventRepository extends BaseRepository {
 
     const events = await this.db.event.findMany(queryOptions);
 
-    return events.map((event) => ({
+    return events.map((event: PrismaEvent) => ({
       id: event.id,
       leagueId: event.leagueId,
       externalId: event.externalId,
@@ -79,7 +80,7 @@ export class EventRepository extends BaseRepository {
     priceAmerican: number,
     impliedProbability: number
   ): Promise<Selection> {
-    return this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Update selection price
       const updated = await tx.selection.update({
         where: { id: selectionId },
@@ -121,7 +122,7 @@ export class EventRepository extends BaseRepository {
       orderBy: { timestamp: 'desc' },
     });
 
-    return history.map((record) => ({
+    return history.map((record: PrismaOddsHistory) => ({
       priceDecimal: record.priceDecimal.toNumber(),
       timestamp: record.timestamp,
     }));

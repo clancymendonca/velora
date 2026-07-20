@@ -38,6 +38,9 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-turbo-
 
+      - name: Build Workspace Packages and Prisma Client
+        run: pnpm build
+
       - name: Verify Lint Rules
         run: pnpm lint
 
@@ -49,6 +52,3 @@ jobs:
 
       - name: Audit Dependencies for Vulnerabilities
         run: pnpm audit --audit-level=high
-
-      - name: Verify Production Builds
-        run: pnpm build

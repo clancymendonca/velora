@@ -1,5 +1,7 @@
 import { BaseRepository } from './BaseRepository.js';
 import { Bet, BetStatus } from '@velora/shared-types';
+import { Bet as PrismaBet, ParlayLeg as PrismaParlayLeg } from '@prisma/client';
+import { Prisma } from '../client.js';
 import { Decimal } from 'decimal.js';
 
 export interface CreateBetData {
@@ -25,7 +27,7 @@ export class BetRepository extends BaseRepository {
    * Creates a new bet, inserting parlay legs transactionally if isParlay is true.
    */
   async createBet(data: CreateBetData): Promise<Bet> {
-    return this.db.$transaction(async (tx) => {
+    return this.db.$transaction(async (tx: Prisma.TransactionClient) => {
       // 1. Create the Bet entry
       const createdBet = await tx.bet.create({
         data: {
@@ -60,7 +62,7 @@ export class BetRepository extends BaseRepository {
         placedAt: createdBet.placedAt,
         settledAt: createdBet.settledAt ?? undefined,
         isParlay: createdBet.isParlay,
-        legs: createdBet.legs.map((leg) => ({
+        legs: createdBet.legs.map((leg: PrismaParlayLeg) => ({
           id: leg.id,
           betId: leg.betId,
           selectionId: leg.selectionId,
@@ -92,7 +94,7 @@ export class BetRepository extends BaseRepository {
       placedAt: bet.placedAt,
       settledAt: bet.settledAt ?? undefined,
       isParlay: bet.isParlay,
-      legs: bet.legs.map((leg) => ({
+      legs: bet.legs.map((leg: PrismaParlayLeg) => ({
         id: leg.id,
         betId: leg.betId,
         selectionId: leg.selectionId,
@@ -125,7 +127,7 @@ export class BetRepository extends BaseRepository {
       } : {}),
     });
 
-    return bets.map((bet) => ({
+    return bets.map((bet: PrismaBet & { legs: PrismaParlayLeg[] }) => ({
       id: bet.id,
       userId: bet.userId,
       status: bet.status.toLowerCase() as BetStatus,
@@ -136,7 +138,7 @@ export class BetRepository extends BaseRepository {
       placedAt: bet.placedAt,
       settledAt: bet.settledAt ?? undefined,
       isParlay: bet.isParlay,
-      legs: bet.legs.map((leg) => ({
+      legs: bet.legs.map((leg: PrismaParlayLeg) => ({
         id: leg.id,
         betId: leg.betId,
         selectionId: leg.selectionId,
@@ -171,7 +173,7 @@ export class BetRepository extends BaseRepository {
       placedAt: updated.placedAt,
       settledAt: updated.settledAt ?? undefined,
       isParlay: updated.isParlay,
-      legs: updated.legs.map((leg) => ({
+      legs: updated.legs.map((leg: PrismaParlayLeg) => ({
         id: leg.id,
         betId: leg.betId,
         selectionId: leg.selectionId,
