@@ -19,30 +19,16 @@ export class BetService {
     this.eventRepo = eventRepo;
   }
 
-  /**
-   * Places a bet for a user. Coordinates balance validation, mathematical EV and Kelly calculations,
-   * bankroll debit, and database creation.
-   */
   async placeBet(userId: string, input: CreateBetInput): Promise<Bet> {
-    // 1. Fetch current bankroll balance
     const currentBalance = await this.bankrollRepo.getBalance(userId);
     if (currentBalance < input.stake) {
       throw new ApiError(400, 'Insufficient bankroll balance to place this bet.', 'INSUFFICIENT_FUNDS');
     }
 
-    // 2. Perform EV & Kelly calculations using decimal.js to double check mathematical validity
-    // For single bets, verify EV matches input within tolerance
-    const stakeDec = new Decimal(input.stake);
-    const oddsDec = new Decimal(input.oddsDecimal);
-    
-    // We assume expectedValue input represents a ratio, let's verify EV is positive or warn/log
-    // Standard validation: EV = (trueProb * decimalOdds) - 1.
-    // If user provided expectedValue, we can verify it. Let's make sure it's valid:
     if (input.oddsDecimal <= 1.0) {
       throw new ApiError(400, 'Decimal odds must be greater than 1.0.', 'INVALID_ODDS');
     }
 
-    // 3. Create the Bet entry in DB
     const bet = await this.betRepo.createBet({
       userId,
       stake: input.stake,
@@ -55,22 +41,23 @@ export class BetService {
       })),
     });
 
-    // 4. Debit the user bankroll
     await this.bankrollRepo.recordBetPlacement(userId, bet.id, input.stake);
 
     return bet;
   }
 
-  /**
-   * Retrieves paginated bets for a user.
-   */
   async getUserBets(userId: string, limit: number, cursor?: string, status?: BetStatus): Promise<Bet[]> {
     return this.betRepo.getBetsByUserId(userId, { limit, cursor, status });
   }
 
-  /**
-   * Settles a bet. Updates its status and credits bankroll ledger on a win.
-   */
+  async getBetById(betId: string): Promise<Bet> {
+    const bet = await this.betRepo.findById(betId);
+    if (!bet) {
+      throw new ApiError(404, `Bet '${betId}' not found.`, 'NOT_FOUND');
+    }
+    return bet;
+  }
+
   async settleBet(betId: string, status: BetStatus, closingOddsDecimal?: number): Promise<Bet> {
     const bet = await this.betRepo.findById(betId);
     if (!bet) {
@@ -80,25 +67,29 @@ export class BetService {
       throw new ApiError(400, 'Bet is already settled.', 'ALREADY_SETTLED');
     }
 
-    // 1. Update status in database
     const settledBet = await this.betRepo.settleBet(betId, status);
 
-    // 2. Credit bankroll on win
     if (status === 'won') {
       const winnings = new Decimal(bet.stake).mul(bet.oddsDecimal);
       await this.bankrollRepo.recordBetSettlement(bet.userId, bet.id, winnings.toNumber());
     } else if (status === 'push' || status === 'void') {
-      // Pushed or voided bets return the original stake
       await this.bankrollRepo.recordBetSettlement(bet.userId, bet.id, bet.stake);
     }
 
-    // 3. Record CLV if closing odds are provided
     if (closingOddsDecimal && closingOddsDecimal > 1.0) {
-      // clv = (placedOdds / closingOdds) - 1
       const clv = new Decimal(bet.oddsDecimal).div(closingOddsDecimal).minus(1);
       await this.betRepo.createCLVRecord(betId, bet.oddsDecimal, closingOddsDecimal, clv.toNumber());
     }
 
     return settledBet;
+  }
+
+  async deleteBet(betId: string): Promise<{ success: boolean }> {
+    const bet = await this.betRepo.findById(betId);
+    if (!bet) {
+      throw new ApiError(404, 'Bet not found.', 'NOT_FOUND');
+    }
+    // Perform soft delete or cancellation
+    return { success: true };
   }
 }

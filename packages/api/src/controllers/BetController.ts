@@ -11,10 +11,6 @@ export class BetController extends BaseController {
     this.betService = betService;
   }
 
-  /**
-   * Places a new bet.
-   * Parses body against CreateBetSchema.
-   */
   async placeBet(
     userId: string,
     body: any,
@@ -29,9 +25,6 @@ export class BetController extends BaseController {
     }
   }
 
-  /**
-   * Fetches paginated bets for a user.
-   */
   async getBets(
     userId: string,
     queryParams: any,
@@ -58,9 +51,18 @@ export class BetController extends BaseController {
     }
   }
 
-  /**
-   * Settles an active pending bet.
-   */
+  async getBetById(
+    betId: string,
+    path: string
+  ): Promise<{ status: number; data: any | ProblemDetails }> {
+    try {
+      const bet = await this.betService.getBetById(betId);
+      return { status: 200, data: bet };
+    } catch (error) {
+      return this.handleException(error, path);
+    }
+  }
+
   async settleBet(
     betId: string,
     body: any,
@@ -74,6 +76,18 @@ export class BetController extends BaseController {
         body.closingOddsDecimal
       );
       return { status: 200, data: bet };
+    } catch (error) {
+      return this.handleException(error, path);
+    }
+  }
+
+  async deleteBet(
+    betId: string,
+    path: string
+  ): Promise<{ status: number; data: any | ProblemDetails }> {
+    try {
+      const result = await this.betService.deleteBet(betId);
+      return { status: 200, data: result };
     } catch (error) {
       return this.handleException(error, path);
     }
