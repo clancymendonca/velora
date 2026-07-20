@@ -15,6 +15,7 @@
   "dependencies": {
     "@velora/calculations": "workspace:*",
     "@velora/shared-types": "workspace:*",
+    "@velora/validators": "workspace:*",
     "expo": "^51.0.28",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",

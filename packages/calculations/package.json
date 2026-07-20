@@ -12,7 +12,11 @@
     }
   },
   "dependencies": {
-    "@velora/shared-types": "workspace:*"
+    "@velora/shared-types": "workspace:*",
+    "decimal.js": "^10.4.3"
+  },
+  "devDependencies": {
+    "fast-check": "^3.21.0"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
