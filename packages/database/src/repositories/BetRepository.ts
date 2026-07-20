@@ -1,5 +1,5 @@
 import { BaseRepository } from './BaseRepository.js';
-import { Bet, BetStatus, ParlayLeg } from '@velora/shared-types';
+import { Bet, BetStatus } from '@velora/shared-types';
 import { Decimal } from 'decimal.js';
 
 export interface CreateBetData {
@@ -108,7 +108,7 @@ export class BetRepository extends BaseRepository {
     const bets = await this.db.bet.findMany({
       where: {
         userId,
-        ...(options.status ? { status: options.status.toUpperCase() as any } : {}),
+        ...(options.status ? { status: options.status.toUpperCase() as never } : {}),
       },
       take: options.limit,
       orderBy: {
@@ -152,7 +152,7 @@ export class BetRepository extends BaseRepository {
     const updated = await this.db.bet.update({
       where: { id },
       data: {
-        status: status.toUpperCase() as any,
+        status: status.toUpperCase() as never,
         settledAt: new Date(),
       },
       include: {

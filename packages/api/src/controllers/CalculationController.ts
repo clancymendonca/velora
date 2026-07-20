@@ -8,7 +8,6 @@ import {
   KellyCalculationInput,
   DevigCalculationInput,
 } from '@velora/validators';
-import { ProblemDetails } from '../types.js';
 
 export class CalculationController extends BaseController {
   private calculationService: CalculationService;
@@ -22,9 +21,9 @@ export class CalculationController extends BaseController {
    * POST /api/calculations/ev
    */
   async calculateEV(
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validated = this.validate(EVCalculationSchema, body) as EVCalculationInput;
       const result = this.calculationService.calculateEV(validated);
@@ -38,9 +37,9 @@ export class CalculationController extends BaseController {
    * POST /api/calculations/kelly
    */
   async calculateKelly(
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validated = this.validate(KellyCalculationSchema, body) as KellyCalculationInput;
       const result = this.calculationService.calculateKelly(validated);
@@ -54,9 +53,9 @@ export class CalculationController extends BaseController {
    * POST /api/calculations/devig
    */
   async calculateDevig(
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validated = this.validate(DevigCalculationSchema, body) as DevigCalculationInput;
       const result = this.calculationService.calculateDevig(validated);

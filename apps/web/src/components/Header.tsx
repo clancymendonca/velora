@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Wallet, TrendingUp, RefreshCw } from 'lucide-react';
+import { Wallet, RefreshCw } from 'lucide-react';
 
 export function Header() {
   const [balance, setBalance] = useState<number | null>(null);

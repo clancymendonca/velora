@@ -1,6 +1,30 @@
 import { OddsProvider, OddsResponse, NormalizedEvent } from './OddsProvider.js';
 import { Sport } from '@velora/shared-types';
 
+interface TheOddsAPIOutcome {
+  name: string;
+  price: number;
+}
+
+interface TheOddsAPIMarket {
+  key: string;
+  outcomes?: TheOddsAPIOutcome[];
+}
+
+interface TheOddsAPIBookmaker {
+  key: string;
+  markets?: TheOddsAPIMarket[];
+}
+
+interface TheOddsAPIResponseItem {
+  id: string;
+  sport_title?: string;
+  home_team: string;
+  away_team: string;
+  commence_time: string;
+  bookmakers?: TheOddsAPIBookmaker[];
+}
+
 export class TheOddsAPIProvider implements OddsProvider {
   name = 'TheOddsAPIProvider';
   private apiKey: string;
@@ -50,7 +74,7 @@ export class TheOddsAPIProvider implements OddsProvider {
       if (!response.ok) {
         throw new Error(`TheOddsAPI returned HTTP ${response.status}`);
       }
-      const data: any[] = await response.json();
+      const data = (await response.json()) as TheOddsAPIResponseItem[];
 
       const events: NormalizedEvent[] = data.map((item) => ({
         externalId: item.id,
@@ -59,11 +83,11 @@ export class TheOddsAPIProvider implements OddsProvider {
         homeTeam: item.home_team,
         awayTeam: item.away_team,
         startTime: new Date(item.commence_time),
-        markets: (item.bookmakers || []).flatMap((bm: any) =>
-          (bm.markets || []).map((m: any) => ({
+        markets: (item.bookmakers || []).flatMap((bm) =>
+          (bm.markets || []).map((m) => ({
             bookmakerKey: bm.key,
             marketType: m.key === 'h2h' ? 'h2h' : m.key === 'spreads' ? 'spreads' : 'totals',
-            selections: (m.outcomes || []).map((o: any) => ({
+            selections: (m.outcomes || []).map((o) => ({
               name: o.name,
               priceDecimal: o.price,
               priceAmerican: o.price > 2.0 ? Math.round((o.price - 1) * 100) : Math.round(-100 / (o.price - 1)),

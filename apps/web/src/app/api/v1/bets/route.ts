@@ -38,8 +38,9 @@ export async function GET(request: NextRequest) {
 
     const response = await betController.getBets(userId, query, '/api/v1/bets');
     return NextResponse.json(response.data, { status: response.status });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized') {
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : 'Internal Server Error';
+    if (errMessage === 'Unauthorized') {
       return NextResponse.json(
         {
           type: 'https://api.velora.com/errors/unauthorized',
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
         type: 'https://api.velora.com/errors/internal-server-error',
         title: 'Internal Server Error',
         status: 500,
-        detail: error.message,
+        detail: errMessage,
         instance: '/api/v1/bets',
       },
       { status: 500 }
@@ -71,8 +72,9 @@ export async function POST(request: NextRequest) {
 
     const response = await betController.placeBet(userId, body, '/api/v1/bets');
     return NextResponse.json(response.data, { status: response.status });
-  } catch (error: any) {
-    if (error.message === 'Unauthorized') {
+  } catch (error: unknown) {
+    const errMessage = error instanceof Error ? error.message : 'Internal Server Error';
+    if (errMessage === 'Unauthorized') {
       return NextResponse.json(
         {
           type: 'https://api.velora.com/errors/unauthorized',
@@ -89,7 +91,7 @@ export async function POST(request: NextRequest) {
         type: 'https://api.velora.com/errors/internal-server-error',
         title: 'Internal Server Error',
         status: 500,
-        detail: error.message,
+        detail: errMessage,
         instance: '/api/v1/bets',
       },
       { status: 500 }

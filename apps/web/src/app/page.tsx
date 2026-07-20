@@ -6,8 +6,6 @@ import {
   DollarSign,
   Percent,
   Zap,
-  Target,
-  ArrowUpRight,
   ShieldCheck,
   PlusCircle,
   BarChart2,
@@ -29,7 +27,6 @@ interface AnalyticsOverview {
 
 export default function DashboardPage() {
   const [analytics, setAnalytics] = useState<AnalyticsOverview | null>(null);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadData() {
@@ -41,8 +38,6 @@ export default function DashboardPage() {
         }
       } catch (e) {
         console.error(e);
-      } finally {
-        setLoading(false);
       }
     }
     loadData();

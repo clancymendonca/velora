@@ -1,5 +1,6 @@
 import { BaseRepository } from './BaseRepository.js';
 import { Event, Sport, EventStatus, Selection } from '@velora/shared-types';
+import { Prisma } from '../client.js';
 import { Decimal } from 'decimal.js';
 
 export interface EventFilterOptions {
@@ -14,30 +15,26 @@ export class EventRepository extends BaseRepository {
    * Retrieves events based on filters (sport, status, start time) with cursor pagination.
    */
   async findEvents(options: EventFilterOptions): Promise<Event[]> {
-    const queryOptions: any = {
-      take: options.limit,
-      orderBy: {
-        startTime: 'asc',
-      },
-      where: {},
-    };
+    const whereClause: Prisma.EventWhereInput = {};
 
     if (options.sport) {
-      queryOptions.where.league = {
-        sport: options.sport.toUpperCase(),
+      whereClause.league = {
+        sport: options.sport.toUpperCase() as never,
       };
     }
 
     if (options.status) {
-      queryOptions.where.status = options.status.toUpperCase();
+      whereClause.status = options.status.toUpperCase() as never;
     }
 
-    if (options.cursor) {
-      queryOptions.skip = 1;
-      queryOptions.cursor = {
-        id: options.cursor,
-      };
-    }
+    const queryOptions: Prisma.EventFindManyArgs = {
+      take: options.limit,
+      orderBy: {
+        startTime: 'asc',
+      },
+      where: whereClause,
+      ...(options.cursor ? { skip: 1, cursor: { id: options.cursor } } : {}),
+    };
 
     const events = await this.db.event.findMany(queryOptions);
 

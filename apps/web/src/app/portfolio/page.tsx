@@ -1,6 +1,6 @@
 'use client';
 
-import { PieChart, Shield, TrendingUp, Layers } from 'lucide-react';
+import { PieChart, Layers } from 'lucide-react';
 
 export default function PortfolioPage() {
   return (

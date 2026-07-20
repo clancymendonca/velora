@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { BarChart3, TrendingUp, ShieldAlert, Award, Activity } from 'lucide-react';
+import { BarChart3, Award, Activity } from 'lucide-react';
 
 interface AnalyticsData {
   overview: {

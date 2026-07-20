@@ -1,5 +1,5 @@
 import { BetRepository, BankrollRepository, EventRepository } from '@velora/database';
-import { expectedValue, kellyCriterion, Decimal } from '@velora/calculations';
+import { Decimal } from '@velora/calculations';
 import { CreateBetInput } from '@velora/validators';
 import { Bet, BetStatus } from '@velora/shared-types';
 import { ApiError } from '../types.js';

@@ -88,7 +88,7 @@ async function main() {
     },
   });
 
-  const event2 = await prisma.event.create({
+  await prisma.event.create({
     data: {
       leagueId: nflLeague.id,
       externalId: 'nfl_kc_sf_20260720',
@@ -100,7 +100,7 @@ async function main() {
   });
 
   // 5. Create Markets & Selections
-  const market1 = await prisma.market.create({
+  await prisma.market.create({
     data: {
       eventId: event1.id,
       bookmakerId: bookmakers[0].id, // Pinnacle

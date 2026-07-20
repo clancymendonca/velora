@@ -28,7 +28,6 @@ export class AnalyticsService {
     let totalProfit = 0;
     let wins = 0;
     let losses = 0;
-    let pushes = 0;
     let maxWinStreak = 0;
     let maxLossStreak = 0;
     let currentWinStreak = 0;
@@ -50,8 +49,6 @@ export class AnalyticsService {
         currentLossStreak++;
         currentWinStreak = 0;
         if (currentLossStreak > maxLossStreak) maxLossStreak = currentLossStreak;
-      } else if (b.status === 'push') {
-        pushes++;
       }
     });
 

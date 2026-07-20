@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Wallet, ArrowUpRight, ArrowDownLeft, Plus, RefreshCw } from 'lucide-react';
+import { Wallet, Plus } from 'lucide-react';
 
 interface BankrollEntry {
   id: string;

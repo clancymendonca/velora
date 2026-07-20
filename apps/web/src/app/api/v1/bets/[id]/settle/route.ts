@@ -13,13 +13,14 @@ export async function POST(
 
     const response = await betController.settleBet(id, body, `/api/v1/bets/${id}/settle`);
     return NextResponse.json(response.data, { status: response.status });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(
       {
         type: 'https://api.velora.com/errors/internal-server-error',
         title: 'Internal Server Error',
         status: 500,
-        detail: error.message,
+        detail: message,
         instance: `/api/v1/bets`,
       },
       { status: 500 }

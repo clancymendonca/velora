@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Calculator, Plus, Trash2, Zap, Shield, CheckCircle2 } from 'lucide-react';
+import { Calculator, Plus, Trash2, Zap } from 'lucide-react';
 import { BetBuilderService, BetType, BetLegInput } from '@velora/api';
 
 const betBuilderService = new BetBuilderService();
@@ -9,8 +9,8 @@ const betBuilderService = new BetBuilderService();
 export default function BetBuilderPage() {
   const [betType, setBetType] = useState<BetType>('single');
   const [stake, setStake] = useState<number>(100);
-  const [bankroll, setBankroll] = useState<number>(10000);
-  const [kellyFraction, setKellyFraction] = useState<number>(0.25);
+  const bankroll = 10000;
+  const kellyFraction = 0.25;
   const [legs, setLegs] = useState<BetLegInput[]>([
     { selectionId: 'sel-1', name: 'Boston Celtics -3.5', priceDecimal: 1.87, estimatedWinProb: 0.55 },
     { selectionId: 'sel-2', name: 'Kansas City Chiefs ML', priceDecimal: 2.02, estimatedWinProb: 0.51 },
@@ -18,7 +18,7 @@ export default function BetBuilderPage() {
 
   const [newSelectionName, setNewSelectionName] = useState('');
   const [newOdds, setNewOdds] = useState('1.91');
-  const [newProb, setNewProb] = useState('0.54');
+  const [newProb] = useState('0.54');
 
   const addLeg = () => {
     if (!newSelectionName.trim()) return;

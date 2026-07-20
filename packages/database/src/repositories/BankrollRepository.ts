@@ -1,5 +1,6 @@
 import { BaseRepository } from './BaseRepository.js';
 import { BankrollEntry } from '@velora/shared-types';
+import { Prisma } from '../client.js';
 import { Decimal } from 'decimal.js';
 
 export class BankrollRepository extends BaseRepository {
@@ -53,7 +54,7 @@ export class BankrollRepository extends BaseRepository {
         id: log.id,
         userId: log.userId,
         timestamp: log.timestamp,
-        type: log.type.toLowerCase() as any,
+        type: log.type.toLowerCase() as BankrollEntry['type'],
         amount: log.amount.toNumber(),
         balanceAfter: log.balanceAfter.toNumber(),
       };
@@ -141,7 +142,7 @@ export class BankrollRepository extends BaseRepository {
       id: log.id,
       userId: log.userId,
       timestamp: log.timestamp,
-      type: log.type.toLowerCase() as any,
+      type: log.type.toLowerCase() as BankrollEntry['type'],
       amount: log.amount.toNumber(),
       balanceAfter: log.balanceAfter.toNumber(),
       referenceId: log.betId ?? undefined,
@@ -149,7 +150,7 @@ export class BankrollRepository extends BaseRepository {
   }
 
   // Internal helper to get balance using a specific transaction transaction runner
-  private async getBalanceForTx(tx: any, userId: string): Promise<Decimal> {
+  private async getBalanceForTx(tx: Prisma.TransactionClient, userId: string): Promise<Decimal> {
     const latestLog = await tx.bankrollLedger.findFirst({
       where: { userId },
       orderBy: { timestamp: 'desc' },

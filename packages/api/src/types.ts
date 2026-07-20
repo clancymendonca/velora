@@ -24,9 +24,9 @@ export interface PaginatedResponse<T> {
 export class ApiError extends Error {
   public status: number;
   public code: string;
-  public details?: any;
+  public details?: unknown;
 
-  constructor(status: number, message: string, code = 'API_ERROR', details?: any) {
+  constructor(status: number, message: string, code = 'API_ERROR', details?: unknown) {
     super(message);
     this.status = status;
     this.code = code;

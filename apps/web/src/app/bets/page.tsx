@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Ticket, CheckCircle2, XCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import { Ticket } from 'lucide-react';
 
 interface BetData {
   id: string;

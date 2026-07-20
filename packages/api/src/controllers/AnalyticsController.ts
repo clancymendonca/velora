@@ -1,6 +1,5 @@
 import { BaseController } from './BaseController.js';
 import { AnalyticsService } from '../services/AnalyticsService.js';
-import { ProblemDetails } from '../types.js';
 
 export class AnalyticsController extends BaseController {
   private analyticsService: AnalyticsService;
@@ -16,7 +15,7 @@ export class AnalyticsController extends BaseController {
   async getAnalytics(
     userId: string,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const analytics = await this.analyticsService.getAnalytics(userId);
       return { status: 200, data: analytics };

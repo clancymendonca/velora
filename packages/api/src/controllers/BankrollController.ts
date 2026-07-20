@@ -1,7 +1,6 @@
 import { BaseController } from './BaseController.js';
 import { BankrollService } from '../services/BankrollService.js';
 import { BankrollTransactionSchema, BankrollTransactionInput } from '@velora/validators';
-import { ProblemDetails } from '../types.js';
 
 export class BankrollController extends BaseController {
   private bankrollService: BankrollService;
@@ -17,7 +16,7 @@ export class BankrollController extends BaseController {
   async getBankroll(
     userId: string,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const bankroll = await this.bankrollService.getBankroll(userId);
       return { status: 200, data: bankroll };
@@ -31,9 +30,9 @@ export class BankrollController extends BaseController {
    */
   async updateBankroll(
     userId: string,
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validated = this.validate(BankrollTransactionSchema, body) as BankrollTransactionInput;
       const entry = await this.bankrollService.updateBankroll(userId, validated);

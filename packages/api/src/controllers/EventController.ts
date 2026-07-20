@@ -16,7 +16,7 @@ export class EventController extends BaseController {
    * GET /api/events
    */
   async getEvents(
-    queryParams: any,
+    queryParams: unknown,
     path: string
   ): Promise<{ status: number; data: PaginatedResponse<Event> | ProblemDetails }> {
     try {

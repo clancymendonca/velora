@@ -5,9 +5,7 @@ import {
   impliedProbabilityFromAmerican,
   americanOddsFromImpliedProbability,
   impliedProbabilityFromDecimal,
-  decimalOddsFromImpliedProbability,
   americanToDecimalOdds,
-  decimalToAmericanOdds,
   devigAdditive,
   devigPower,
   devigShin,
@@ -21,8 +19,6 @@ import {
   calculateBrierScore,
   calculateCalibrationBuckets,
   simulateBankrollPath,
-  isValidProbability,
-  isValidProbabilityVector,
 } from './index.js';
 
 describe('Calculations Core - Odds Conversions', () => {

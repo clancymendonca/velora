@@ -1,7 +1,6 @@
 import { BaseController } from './BaseController.js';
 import { BetService } from '../services/BetService.js';
 import { CreateBetSchema, UpdateBetSchema, CreateBetInput, UpdateBetInput } from '@velora/validators';
-import { ProblemDetails } from '../types.js';
 
 export class BetController extends BaseController {
   private betService: BetService;
@@ -13,9 +12,9 @@ export class BetController extends BaseController {
 
   async placeBet(
     userId: string,
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validatedInput = this.validate(CreateBetSchema, body) as CreateBetInput;
       const bet = await this.betService.placeBet(userId, validatedInput);
@@ -27,13 +26,13 @@ export class BetController extends BaseController {
 
   async getBets(
     userId: string,
-    queryParams: any,
+    queryParams: Record<string, string | null | undefined>,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const limit = queryParams.limit ? parseInt(queryParams.limit, 10) : 20;
       const cursor = queryParams.cursor || undefined;
-      const status = queryParams.status || undefined;
+      const status = (queryParams.status as never) || undefined;
 
       const bets = await this.betService.getUserBets(userId, limit, cursor, status);
       
@@ -54,7 +53,7 @@ export class BetController extends BaseController {
   async getBetById(
     betId: string,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const bet = await this.betService.getBetById(betId);
       return { status: 200, data: bet };
@@ -65,15 +64,15 @@ export class BetController extends BaseController {
 
   async settleBet(
     betId: string,
-    body: any,
+    body: unknown,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const validatedInput = this.validate(UpdateBetSchema, body) as UpdateBetInput;
       const bet = await this.betService.settleBet(
         betId,
         validatedInput.status,
-        body.closingOddsDecimal
+        (body as Record<string, unknown>)?.closingOddsDecimal as number | undefined
       );
       return { status: 200, data: bet };
     } catch (error) {
@@ -84,7 +83,7 @@ export class BetController extends BaseController {
   async deleteBet(
     betId: string,
     path: string
-  ): Promise<{ status: number; data: any | ProblemDetails }> {
+  ): Promise<{ status: number; data: unknown }> {
     try {
       const result = await this.betService.deleteBet(betId);
       return { status: 200, data: result };

@@ -6,7 +6,7 @@ export class BaseController {
    * Validates input body data against a Zod schema.
    * Throws an ApiError on validation failure.
    */
-  protected validate<T>(schema: z.Schema<T>, data: any): T {
+  protected validate<T>(schema: z.Schema<T>, data: unknown): T {
     try {
       return schema.parse(data);
     } catch (error) {
@@ -20,11 +20,11 @@ export class BaseController {
   /**
    * Formats standard caught errors into RFC 7807 Problem Details representation.
    */
-  protected handleException(error: any, instancePath?: string): { status: number; data: ProblemDetails } {
+  protected handleException(error: unknown, instancePath?: string): { status: number; data: ProblemDetails } {
     if (error instanceof ApiError) {
       const isValidationError = error.code === 'VALIDATION_ERROR';
       const invalidParams = isValidationError && Array.isArray(error.details)
-        ? error.details.map((err: any) => ({
+        ? (error.details as z.ZodIssue[]).map((err) => ({
             name: err.path.join('.'),
             reason: err.message,
           }))

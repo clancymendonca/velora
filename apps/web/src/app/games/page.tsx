@@ -1,15 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Calendar, Filter, Zap, PlusCircle } from 'lucide-react';
+import { Calendar, Zap, PlusCircle } from 'lucide-react';
 import Link from 'next/link';
-
-interface MarketSelection {
-  name: string;
-  priceDecimal: number;
-  priceAmerican: number;
-  impliedProbability: number;
-}
 
 interface EventData {
   id: string;
@@ -21,7 +14,6 @@ interface EventData {
 
 export default function GamesPage() {
   const [events, setEvents] = useState<EventData[]>([]);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadGames() {
@@ -33,8 +25,6 @@ export default function GamesPage() {
         }
       } catch (e) {
         console.error(e);
-      } finally {
-        setLoading(false);
       }
     }
     loadGames();

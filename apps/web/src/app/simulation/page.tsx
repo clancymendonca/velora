@@ -1,8 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { LineChart, Play, ShieldAlert, CheckCircle2 } from 'lucide-react';
+import { LineChart, Play } from 'lucide-react';
 import { simulateBankrollPath, Decimal } from '@velora/calculations';
+
+interface SimulationResultState {
+  finalBalance: number;
+  isBroke: boolean;
+  history: number[];
+}
 
 export default function SimulationPage() {
   const [initialBankroll, setInitialBankroll] = useState<number>(10000);
@@ -11,7 +17,7 @@ export default function SimulationPage() {
   const [kellyFraction, setKellyFraction] = useState<number>(0.25);
   const [numBets, setNumBets] = useState<number>(100);
 
-  const [simResult, setSimResult] = useState<any>(null);
+  const [simResult, setSimResult] = useState<SimulationResultState | null>(null);
 
   const runSimulation = () => {
     try {
